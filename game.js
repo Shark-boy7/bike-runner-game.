@@ -1,140 +1,95 @@
-const canvas = document.getElementById('game');
-const ctx = canvas.getContext('2d');
-const scoreEl = document.getElementById('score');
-const coinsEl = document.getElementById('coins');
-const gameOverScreen = document.getElementById('gameOver');
-const finalScoreEl = document.getElementById('finalScore');
-const finalCoinsEl = document.getElementById('finalCoins');
+let game;
+let score = 0, coins = 0, speed = 6;
 
-let score = 0, coins = 0, speed = 7, gameRunning = false;
-let carX = 400, carY = 380;
-let obstacles = [], collectibles = [];
-let bgY = 0;
-
-function drawBackground() {
-  // Sky
-  ctx.fillStyle = '#0a001f';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+function startGame() {
+  if (game) game.destroy(true);
   
-  // Neon buildings
-  ctx.fillStyle = '#1a0033';
-  for (let i = 0; i < 8; i++) {
-    let x = (i * 120) % (canvas.width + 200) - 100;
-    ctx.fillRect(x, 100 + (i%3)*50, 80, 400);
-    ctx.fillStyle = '#00ffff';
-    ctx.fillRect(x + 20, 150, 10, 20);
-  }
+  const config = {
+    type: Phaser.AUTO,
+    width: 900,
+    height: 550,
+    parent: document.body,
+    physics: { default: 'arcade' },
+    scene: { preload: preload, create: create, update: update }
+  };
+  game = new Phaser.Game(config);
+}
+
+function preload() {
+  // We use colors since no images yet
+  this.load.image('road', 'https://i.imgur.com/empty.png'); // placeholder
+}
+
+function create() {
+  // Background
+  this.bg = this.add.rectangle(450, 275, 900, 550, 0x0a001f);
   
   // Road
-  ctx.fillStyle = '#1f1f2e';
-  ctx.fillRect(0, 300, canvas.width, 300);
+  this.road = this.add.rectangle(450, 400, 900, 300, 0x1f2937);
   
-  // Neon road lines
-  ctx.strokeStyle = '#ff00ff';
-  ctx.lineWidth = 8;
-  for (let i = -3; i < 10; i++) {
-    let y = (bgY + i * 90) % 700;
-    ctx.beginPath();
-    ctx.moveTo(200, 320 + y);
-    ctx.lineTo(canvas.width - 200, 320 + y);
-    ctx.stroke();
-  }
-}
-
-function drawCar() {
-  // Car body
-  ctx.fillStyle = '#ff00aa';
-  ctx.fillRect(carX, carY, 110, 50);
-  
-  // Windows
-  ctx.fillStyle = '#00ffff';
-  ctx.fillRect(carX + 20, carY + 10, 70, 20);
-  
-  // Exhaust
-  ctx.fillStyle = '#ffff00';
-  ctx.fillRect(carX - 15, carY + 30, 20, 12);
+  // Car (better looking)
+  this.car = this.add.rectangle(380, 380, 110, 55, 0xff0088);
+  this.car.setStrokeStyle(4, 0x00ffff);
   
   // Wheels
-  ctx.fillStyle = '#111';
-  ctx.fillRect(carX + 10, carY + 45, 25, 18);
-  ctx.fillRect(carX + 75, carY + 45, 25, 18);
+  this.wheel1 = this.add.rectangle(340, 410, 25, 20, 0x000000);
+  this.wheel2 = this.add.rectangle(460, 410, 25, 20, 0x000000);
+  
+  this.scoreText = this.add.text(20, 20, 'Score: 0', { fontSize: '28px', fill: '#00ffff' });
+  this.coinText = this.add.text(20, 60, 'Coins: 0', { fontSize: '28px', fill: '#ffff00' });
+  
+  this.coinsGroup = this.physics.add.group();
+  this.obstaclesGroup = this.physics.add.group();
+  
+  this.time.addEvent({ delay: 800, callback: spawnCoin, callbackScope: this, loop: true });
+  this.time.addEvent({ delay: 1200, callback: spawnObstacle, callbackScope: this, loop: true });
+  
+  // Click to change lane
+  this.input.on('pointerdown', (pointer) => {
+    if (pointer.x < 450) this.car.x = 280;
+    else this.car.x = 520;
+  });
 }
 
-function createCollectible() {
-  if (Math.random() < 0.04) {
-    collectibles.push({
-      x: Math.random() * 500 + 200,
-      y: 100,
-      size: 28
-    });
-  }
+function spawnCoin() {
+  if (!game) return;
+  const coin = this.coinsGroup.create(200 + Math.random()*500, 100, null);
+  coin.setTint(0xffff00);
+  coin.body.velocity.y = speed * 60 + 100;
 }
 
-function drawCollectibles() {
-  for (let i = 0; i < collectibles.length; i++) {
-    let c = collectibles[i];
-    ctx.fillStyle = '#ffff00';
-    ctx.beginPath();
-    ctx.arc(c.x, c.y, c.size/2, 0, Math.PI*2);
-    ctx.fill();
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 18px Arial';
-    ctx.fillText('R', c.x - 6, c.y + 6);
-    
-    c.y += speed + 2;
-    
-    // Collect coin
-    if (Math.abs(c.x - (carX + 55)) < 50 && Math.abs(c.y - (carY + 30)) < 50) {
-      coins++;
-      coinsEl.textContent = coins;
-      collectibles.splice(i, 1);
-      i--;
-    }
-  }
+function spawnObstacle() {
+  if (!game) return;
+  const obs = this.obstaclesGroup.create(200 + Math.random()*500, 100, null);
+  obs.setTint(0xff0000);
+  obs.body.velocity.y = speed * 60 + 120;
 }
 
 function update() {
-  if (!gameRunning) return;
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  bgY += speed;
-  
-  drawBackground();
-  drawCar();
-  createCollectible();
-  drawCollectibles();
-
   score += 1;
-  scoreEl.textContent = Math.floor(score / 2);
-
-  if (score % 250 === 0) speed = Math.min(speed + 0.6, 16);
-
-  requestAnimationFrame(update);
+  document.getElementById('score').textContent = Math.floor(score / 3);
+  
+  if (score % 400 === 0) speed = Math.min(speed + 0.8, 18);
+  
+  // Move coins & obstacles
+  this.coinsGroup.getChildren().forEach(c => {
+    if (c.y > 600) c.destroy();
+    if (Phaser.Geom.Intersects.RectangleToRectangle(this.car.getBounds(), c.getBounds())) {
+      coins++;
+      document.getElementById('coins').textContent = coins;
+      c.destroy();
+    }
+  });
+  
+  this.obstaclesGroup.getChildren().forEach(o => {
+    if (o.y > 600) o.destroy();
+    if (Phaser.Geom.Intersects.RectangleToRectangle(this.car.getBounds(), o.getBounds())) {
+      alert("💥 GAME OVER! Score: " + Math.floor(score/3));
+      startGame();
+    }
+  });
 }
 
-window.startGame = () => {
-  score = 0; coins = 0; speed = 7;
-  collectibles = [];
-  gameRunning = true;
-  gameOverScreen.style.display = 'none';
-  update();
-};
-
-window.restartGame = () => startGame();
-
 window.connectWallet = () => {
-  alert("🔗 Base Wallet Connect coming soon!");
+  alert("🔗 Base Wallet Connect coming in next step!");
 };
-
-// Controls - Click left or right side to move
-canvas.addEventListener('click', (e) => {
-  if (!gameRunning) return;
-  const rect = canvas.getBoundingClientRect();
-  const clickX = e.clientX - rect.left;
-  
-  if (clickX < canvas.width / 2) {
-    carX = Math.max(200, carX - 120);   // Move Left
-  } else {
-    carX = Math.min(600, carX + 120);   // Move Right
-  }
-});
