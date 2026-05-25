@@ -3,26 +3,53 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bike Runner Game</title>
+  <title>Bike Racer - Onchain Game</title>
   <style>
-    body { margin: 0; background: #000; font-family: Arial; overflow: hidden; }
-    canvas { display: block; margin: 20px auto; background: #87CEEB; }
+    body { 
+      margin: 0; 
+      background: #0a0a0a; 
+      font-family: 'Arial', sans-serif; 
+      color: white;
+      overflow: hidden;
+    }
+    canvas { 
+      display: block; 
+      margin: 20px auto; 
+      border: 3px solid #00ff00;
+      border-radius: 12px;
+      box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
+    }
     #ui {
-      position: absolute; top: 20px; left: 20px; color: white; font-size: 22px; z-index: 10;
+      position: absolute; 
+      top: 20px; left: 20px; 
+      z-index: 100;
+      background: rgba(0,0,0,0.7);
+      padding: 15px 20px;
+      border-radius: 12px;
+      border: 2px solid #00ff00;
     }
     button {
-      padding: 15px 25px; font-size: 18px; margin: 8px;
-      background: #00ff00; border: none; border-radius: 10px; cursor: pointer;
+      padding: 14px 28px;
+      font-size: 18px;
+      margin: 8px 5px;
+      background: linear-gradient(#00ff00, #00cc00);
+      border: none;
+      border-radius: 10px;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
     }
+    button:hover { background: #00ff88; }
   </style>
 </head>
 <body>
   <div id="ui">
-    <div>Score: <span id="score">0</span></div><br>
-    <button onclick="connectWallet()">Connect Wallet</button>
-    <button onclick="startGame()">🚀 Start Game</button>
+    <div style="font-size:24px; margin-bottom:10px;">🏍️ <span id="score">0</span></div>
+    <button onclick="startGame()">🚀 Start Racing</button>
+    <button onclick="connectWallet()">🔗 Connect Wallet</button>
   </div>
-  <canvas id="game" width="800" height="400"></canvas>
+
+  <canvas id="game" width="900" height="500"></canvas>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/viem/2.21.0/viem.umd.min.js"></script>
   <script src="game.js"></script>
