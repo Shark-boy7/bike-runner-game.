@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bike Runner Game</title>
+  <style>
+    body { margin: 0; background: #000; font-family: Arial; overflow: hidden; }
+    canvas { display: block; margin: 20px auto; background: #87CEEB; }
+    #ui {
+      position: absolute; top: 20px; left: 20px; color: white; font-size: 22px; z-index: 10;
+    }
+    button {
+      padding: 15px 25px; font-size: 18px; margin: 8px;
+      background: #00ff00; border: none; border-radius: 10px; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="ui">
+    <div>Score: <span id="score">0</span></div><br>
+    <button onclick="connectWallet()">Connect Wallet</button>
+    <button onclick="startGame()">🚀 Start Game</button>
+  </div>
+  <canvas id="game" width="800" height="400"></canvas>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/viem/2.21.0/viem.umd.min.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
