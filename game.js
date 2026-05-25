@@ -4,83 +4,98 @@ const scoreElement = document.getElementById('score');
 
 let score = 0;
 let gameRunning = false;
-let bikeY = 300;
-let velocity = 0;
-let gravity = 0.8;
-let isJumping = false;
-const obstacles = [];
+let speed = 8;
+let bikeX = 150;
+let bikeY = 320;
 
-function drawBike() {
-  ctx.fillStyle = '#ff0000';
-  ctx.fillRect(100, bikeY, 70, 30);
-  ctx.fillStyle = '#000';
-  ctx.beginPath();
-  ctx.arc(125, bikeY + 35, 18, 0, Math.PI * 2);
-  ctx.fill();
+// Road lines
+let roadLines = [];
+
+function initRoad() {
+  roadLines = [];
+  for (let i = 0; i < 15; i++) {
+    roadLines.push({ y: i * 50 });
+  }
 }
 
-function drawGround() {
-  ctx.fillStyle = '#228B22';
-  ctx.fillRect(0, 350, canvas.width, 50);
+function drawBackground() {
+  // Sky
+  ctx.fillStyle = '#1e3a8a';
+  ctx.fillRect(0, 0, canvas.width, 350);
+  
+  // Grass
+  ctx.fillStyle = '#166534';
+  ctx.fillRect(0, 350, canvas.width, canvas.height - 350);
+  
+  // Road
+  ctx.fillStyle = '#374151';
+  ctx.fillRect(0, 300, canvas.width, 200);
+  
+  // Road lines
+  ctx.fillStyle = '#facc15';
+  for (let i = 0; i < roadLines.length; i++) {
+    let line = roadLines[i];
+    ctx.fillRect(0, line.y, canvas.width, 8);
+    line.y += speed;
+    if (line.y > canvas.height) line.y = -50;
+  }
+}
+
+function drawBike() {
+  // Main body
+  ctx.fillStyle = '#ef4444';
+  ctx.fillRect(bikeX, bikeY, 90, 35);
+  
+  // Front
+  ctx.fillStyle = '#b91c1c';
+  ctx.fillRect(bikeX + 70, bikeY - 10, 35, 25);
+  
+  // Wheels
+  ctx.fillStyle = '#111827';
+  ctx.beginPath();
+  ctx.arc(bikeX + 20, bikeY + 40, 18, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(bikeX + 75, bikeY + 40, 18, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Wheel shine
+  ctx.fillStyle = '#6b7280';
+  ctx.beginPath();
+  ctx.arc(bikeX + 20, bikeY + 40, 10, 0, Math.PI * 2);
+  ctx.fill();
 }
 
 function update() {
   if (!gameRunning) return;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawGround();
+  
+  drawBackground();
   drawBike();
 
-  velocity += gravity;
-  bikeY += velocity;
-
-  if (bikeY >= 300) {
-    bikeY = 300;
-    velocity = 0;
-    isJumping = false;
-  }
-
   score += 1;
-  scoreElement.textContent = score;
+  scoreElement.textContent = Math.floor(score / 2);
 
-  if (Math.random() < 0.025) {
-    obstacles.push({x: 800, y: 315});
-  }
-
-  ctx.fillStyle = '#8B4513';
-  for (let i = 0; i < obstacles.length; i++) {
-    let obs = obstacles[i];
-    ctx.fillRect(obs.x, obs.y, 45, 45);
-    obs.x -= 6;
-
-    if (obs.x < 170 && obs.x > 70 && bikeY > 270) {
-      alert("💥 Game Over! Your Score: " + score);
-      gameRunning = false;
-      obstacles.length = 0;
-    }
-  }
+  // Increase speed gradually
+  if (score % 300 === 0) speed = Math.min(speed + 0.5, 15);
 
   requestAnimationFrame(update);
 }
 
-function jump() {
-  if (!isJumping && gameRunning) {
-    velocity = -19;
-    isJumping = true;
-  }
-}
-
-document.addEventListener('keydown', (e) => {
-  if (e.key === ' ' || e.key === 'ArrowUp') jump();
-});
-
 window.startGame = () => {
   score = 0;
-  obstacles.length = 0;
+  speed = 8;
   gameRunning = true;
+  initRoad();
   update();
 };
 
 window.connectWallet = () => {
-  alert("✅ Wallet Connect coming soon!");
+  alert("🔗 Wallet Connect coming in next update!");
 };
+
+// Click to boost speed
+canvas.addEventListener('click', () => {
+  if (gameRunning) speed = Math.min(speed + 3, 18);
+});
