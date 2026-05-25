@@ -3,23 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cyber Car Racer</title>
-  <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <title>CYBER RACER</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="newgame.css">
 </head>
 <body>
   <div class="game">
-    <div class="score">Score: 0</div>
-    <div class="highScore">High Score: 0</div>
-    
-    <div class="startScreen">
-      <h1>CYBER RACER</h1>
-      <p class="ClickToStart">CLICK TO START</p>
-      <p>← → Arrow Keys to Move</p>
-      <p>Avoid Other Cars</p>
+    <div class="header">
+      <div class="score">SCORE: <span id="score">0</span></div>
+      <div class="highScore">HIGH: <span id="highScore">0</span></div>
     </div>
 
     <div class="gameArea"></div>
+
+    <div class="startScreen" id="startScreen">
+      <h1>CYBER RACER</h1>
+      <p class="clickToStart">CLICK TO START</p>
+      <div class="instructions">
+        ← → Arrow Keys to Move<br>
+        Avoid Other Cars
+      </div>
+    </div>
+
+    <div class="gameOver" id="gameOver">
+      <h1>GAME OVER</h1>
+      <p>Score: <span id="finalScore">0</span></p>
+      <button onclick="restartGame()">PLAY AGAIN</button>
+    </div>
   </div>
 
   <script src="game.js"></script>
