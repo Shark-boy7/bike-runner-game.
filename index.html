@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cyber Racer - Onchain</title>
-  <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+  <title>Cyber Racer</title>
   <style>
-    body { margin: 0; background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    body { margin: 0; background: #000; font-family: Arial; overflow: hidden; }
+    canvas { display: block; margin: 20px auto; border: 5px solid #00ffff; border-radius: 15px; box-shadow: 0 0 60px #00ffff; }
     #ui {
-      position: absolute; top: 20px; left: 20px; color: white; z-index: 100; font-family: Arial;
-      text-shadow: 0 0 10px #00ffff;
+      position: absolute; top: 20px; left: 20px; z-index: 100; color: white; font-size: 24px;
+      text-shadow: 0 0 15px #00ffff;
     }
     button {
       padding: 15px 30px; margin: 8px; font-size: 18px; background: #ff00ff; color: white;
@@ -24,7 +24,7 @@
     <button onclick="startGame()">🚀 START RACE</button>
     <button onclick="connectWallet()">🔗 Connect Wallet</button>
   </div>
-
+  <canvas id="game" width="900" height="550"></canvas>
   <script src="game.js"></script>
 </body>
 </html>
