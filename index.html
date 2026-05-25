@@ -3,34 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CYBER RACER</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="newgame.css">
+  <title>Cyber Racer - Onchain</title>
+  <style>
+    body { 
+      margin: 0; 
+      background: #000; 
+      font-family: Arial; 
+      overflow: hidden; 
+    }
+    canvas { 
+      display: block; 
+      margin: 20px auto; 
+      border: 6px solid #00ffff; 
+      border-radius: 20px;
+      box-shadow: 0 0 70px #00ffff;
+    }
+    #ui {
+      position: absolute; 
+      top: 25px; left: 25px; 
+      z-index: 100; 
+      color: white; 
+      font-size: 26px;
+      text-shadow: 0 0 15px #00ffff;
+    }
+    button {
+      padding: 16px 32px; 
+      margin: 8px; 
+      font-size: 19px; 
+      background: linear-gradient(#ff00ff, #cc00cc); 
+      color: white; 
+      border: none; 
+      border-radius: 12px; 
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <div class="game">
-    <div class="header">
-      <div class="score">SCORE: <span id="score">0</span></div>
-      <div class="highScore">HIGH: <span id="highScore">0</span></div>
-    </div>
-
-    <div class="gameArea"></div>
-
-    <div class="startScreen" id="startScreen">
-      <h1>CYBER RACER</h1>
-      <p class="clickToStart">CLICK TO START</p>
-      <div class="instructions">
-        ← → Arrow Keys to Move<br>
-        Avoid Other Cars
-      </div>
-    </div>
-
-    <div class="gameOver" id="gameOver">
-      <h1>GAME OVER</h1>
-      <p>Score: <span id="finalScore">0</span></p>
-      <button onclick="restartGame()">PLAY AGAIN</button>
-    </div>
+  <div id="ui">
+    <div>Score: <span id="score">0</span></div>
+    <div>Coins: <span id="coins">0</span></div>
+    <button onclick="startGame()">🚀 START RACE</button>
+    <button onclick="connectWallet()">🔗 Connect Wallet</button>
   </div>
+
+  <canvas id="game" width="900" height="550"></canvas>
 
   <script src="game.js"></script>
 </body>
